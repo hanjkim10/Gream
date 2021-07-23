@@ -6,6 +6,7 @@ from django.http     import JsonResponse
 
 from users.models    import User
 from gream.settings  import SECRET_KEY, ALGORITHMS
+from utils           import authorization
 
 REGEX = {
     'email'    : '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$',
@@ -60,3 +61,22 @@ class SigninView(View):
             return JsonResponse({'message':'INVALID_USER'}, status=401)
         except KeyError:
             return JsonResponse({'message':'KEY_ERROR'}, status=400)
+
+class UserView(View):
+    @authorization
+    def get(self, request):
+        user = request.user
+
+        results = {
+            'name': user.name,
+            'address': user.address,
+            'phone_number': user.phone_number,
+            'payment': {
+                'card_company': user.card_company,
+                'card_number': user.card_number,
+                'bank_name': user.bank_name,
+                'bank_account':user.bank_account
+            }
+        }
+
+        return JsonResponse({'results': results}, status=200)

@@ -1,5 +1,4 @@
-import json, bcrypt, jwt
-from datetime       import datetime, timedelta
+import jwt, json, bcrypt
 
 from django.test    import TestCase, Client
 
@@ -256,3 +255,47 @@ class SigninTest(TestCase):
 
     def tearDown(self):
         User.objects.all().delete()
+
+class UserTest(TestCase):
+    def setUp(self):
+        User.objects.create(
+            id           = 1,
+            email        = 'hi@gmail.com',
+            password     = '12345678',
+            phone_number = '01041900423',
+            name         = '박정훈',
+            card_company = '삼성',
+            card_number  = "3544-9652-2645-1933",
+            bank_name    = '기업',
+            bank_account = "10029-01-930045",
+            address      = "서울특별시 강남구 테헤란로 427"
+        )
+
+        global headers
+        access_token = jwt.encode({"user_id" : 1}, SECRET_KEY, ALGORITHMS)
+        headers      = {'HTTP_AUTHORIZATION': access_token}
+
+    def tearDown(self):
+        User.objects.all().delete()
+
+    def test_userview_get(self):
+        client = Client()
+
+        response = client.get('/users/info', **headers)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), 
+            {
+                "results": {
+                    "name": "박정훈",
+                    "address": "서울특별시 강남구 테헤란로 427",
+                    "phone_number": "01041900423",
+                    "payment": {
+                        "card_company": "삼성",
+                        "card_number": "3544-9652-2645-1933",
+                        "bank_name": "기업",
+                        "bank_account": "10029-01-930045"
+                    }
+                }
+            }
+        )
