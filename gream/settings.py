@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
+    'django_crontab',
     'users',
     'products',
     'orders',
@@ -106,7 +107,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+# TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
@@ -152,3 +154,8 @@ CORS_ALLOW_HEADERS = (
     'x-csrftoken',
     'x-requested-with',
 )
+
+##CRONJOBS
+CRONJOBS = [
+    ('10 00 * * *', 'orders.cron.update_bidding_status', '>> /tmp/update.log')
+]
