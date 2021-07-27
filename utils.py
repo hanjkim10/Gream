@@ -1,6 +1,8 @@
-import jwt
+import jwt, functools, time
 
-from django.http import JsonResponse
+from django.http    import JsonResponse
+from django.db      import connection, reset_queries
+from django.conf    import settings
 
 from gream.settings import SECRET_KEY, ALGORITHMS
 from users.models   import User
@@ -29,4 +31,21 @@ def authorization(func):
         except jwt.DecodeError:
             return JsonResponse({'error':'INVALID_TOKEN'}, status=401)
             
+    return wrapper
+
+def query_debugger(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        reset_queries()
+        number_of_start_queries = len(connection.queries)
+        start  = time.perf_counter()
+        result = func(*args, **kwargs)
+        end    = time.perf_counter()
+        number_of_end_queries = len(connection.queries)
+        print(f"-------------------------------------------------------------------")
+        print(f"Function : {func.__name__}")
+        print(f"Number of Queries : {number_of_end_queries-number_of_start_queries}")
+        print(f"Finished in : {(end - start):.2f}s")
+        print(f"-------------------------------------------------------------------")
+        return result
     return wrapper

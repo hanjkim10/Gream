@@ -50,7 +50,7 @@ class SignupTest(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), 
             {
-                'error':'INVALID_ERROR'
+                'message':'INVALID_ERROR'
             }
         )
 
@@ -67,7 +67,7 @@ class SignupTest(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), 
             {
-                'error':'INVALID_ERROR'
+                'message':'INVALID_ERROR'
             }
         )
 
@@ -323,7 +323,7 @@ class KakaoSignupTest(TestCase):
         response            = client.get("/users/signin/kakao", **headers)
         access_token        = response.json()['TOKEN']
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json(), 
             {
                 'message':'SUCCESS',
