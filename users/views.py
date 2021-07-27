@@ -1,8 +1,10 @@
-import re, json, bcrypt, jwt
-from datetime        import datetime, timedelta
+from orders.models import Status
+import re, json, bcrypt, jwt, requests
+from datetime         import datetime, timedelta
 
-from django.views    import View
-from django.http     import JsonResponse
+from django.views     import View
+from django.http      import JsonResponse
+from django.shortcuts import redirect
 
 from users.models    import User
 from gream.settings  import SECRET_KEY, ALGORITHMS
@@ -23,7 +25,7 @@ class SignupView(View):
             name         = data['name']
 
             if not re.match(REGEX['email'], email) or not re.match(REGEX['password'], password):
-                return JsonResponse({'error':'INVALID_ERROR'}, status=400)
+                return JsonResponse({'message':'INVALID_ERROR'}, status=400)
             
             if User.objects.filter(email=email).exists() or User.objects.filter(phone_number=phone_number).exists():
                 return JsonResponse({'message':'DUPLICATE'},status=409)
@@ -80,3 +82,16 @@ class UserView(View):
         }
 
         return JsonResponse({'results': results}, status=200)
+
+class KakaoSigninView(View):
+    def get(self, request):
+        access_token     = request.headers.get('Authorization')
+        profile_request  = requests.get("https://kapi.kakao.com/v2/user/me", headers={"Authorization" : f"Bearer {access_token}"}).json()
+        user, is_created = User.objects.get_or_create(kakao_id = profile_request["id"])
+        access_token     = jwt.encode({'user_id':user.id, 'exp':datetime.utcnow()+timedelta(days=1)},SECRET_KEY,algorithm=ALGORITHMS)
+
+        if is_created:
+            user.email = profile_request['kakao_account']["email"]
+            user.save()
+            return JsonResponse({'message':'SUCCESS', 'TOKEN':access_token}, status=201)
+        return JsonResponse({'message':'SUCCESS', 'TOKEN':access_token}, status=200)

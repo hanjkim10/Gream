@@ -1,4 +1,6 @@
-import jwt, json, bcrypt
+import json, bcrypt, jwt
+from datetime       import datetime, timedelta
+from unittest.mock  import patch, MagicMock
 
 from django.test    import TestCase, Client
 
@@ -285,8 +287,8 @@ class UserTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), 
-            {
-                "results": {
+        {
+                    "results": {
                     "name": "박정훈",
                     "address": "서울특별시 강남구 테헤란로 427",
                     "phone_number": "01041900423",
@@ -296,6 +298,35 @@ class UserTest(TestCase):
                         "bank_name": "기업",
                         "bank_account": "10029-01-930045"
                     }
+                }})
+
+class KakaoSignupTest(TestCase):
+    @patch("users.views.requests")
+    def test_kakao_signin_new_user_success(self, mocked_requests):
+        client = Client()
+
+        class MockedResponse:
+            def json(self):
+                return {
+                    'id': 1234567899, 
+                    'connected_at': '2021-07-23T11:25:47Z', 
+                    'kakao_account': {
+                        'has_email': True, 
+                        'email_needs_agreement': False, 
+                        'is_email_valid': True, 
+                        'is_email_verified': True, 
+                        'email': 'kakaologin@naver.com'}
                 }
+        
+        mocked_requests.get = MagicMock(return_value = MockedResponse())
+        headers             = {"Authoriazation":"fake access_token"}
+        response            = client.get("/users/signin/kakao", **headers)
+        access_token        = response.json()['TOKEN']
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), 
+            {
+                'message':'SUCCESS',
+                'TOKEN':access_token
             }
         )

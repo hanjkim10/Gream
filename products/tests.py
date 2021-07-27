@@ -225,7 +225,6 @@ class ProductTest(TestCase):
             product_id = 3
         )
         
-       
     def tearDown(self):
         Author.objects.all().delete()
         Theme.objects.all().delete()
