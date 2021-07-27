@@ -235,35 +235,29 @@ class ProductTest(TestCase):
         client  = Client()
         productlist = [
             {
+                "author_id"                 : 1,
                 "product_id"                : 1,
                 "product_name"              : "Topsy Emerie Quinten Maddison Poster",
-                "product_buying_price"      : "8299000.00",
-                "product_buying_price_name" : "즉시 구매가순",
-                'product_selling_price'     : "2125000.00",
-                "product_selling_price_name": "즉시 판매가순",
-                "product_original_price"    : "654000.00",
+                "product_price"             : "2125000.00",
+                "sort_name"                 : "즉시 판매가순",
                 "author_name"               : "Bianka Anastazija",
                 "image"                     : ["https://images.unsplash.com/photo-1597873618537-64a04f9e1fb3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMjA3fDB8MXxzZWFyY2h8Mnx8cG9zdGVyfHwwfDJ8fHwxNjI2Njg4OTQ0&ixlib=rb-1.2.1&q=80&w=1080"]
             },
             {
+                "author_id"                 : 2,
                 "product_id"                : 2,
                 "product_name"              : "Lynnette Kimberlyn Jonah Webster poster",
-                "product_buying_price"      : "8574000.00",
-                "product_buying_price_name" : "즉시 구매가순",
-                'product_selling_price'     : "1950000.00",
-                "product_selling_price_name": "즉시 판매가순",
-                "product_original_price"    : "20000.00",
+                "product_price"             : "1950000.00",
+                "sort_name"                 : "즉시 판매가순",
                 "author_name"               : "Shantelle Bruno",
                 "image"                     : ["https://images.unsplash.com/photo-1600164318544-79e55da1ac8f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMjA3fDB8MXxzZWFyY2h8M3x8cG9zdGVyfHwwfDJ8fHwxNjI2Njg4OTQ0&ixlib=rb-1.2.1&q=80&w=1080"]
             },
             {
+                "author_id"                 : 3,
                 "product_id"                : 3,
                 "product_name"              : "Benson Adrianne Joshua Katey poster",
-                "product_buying_price"      : "9023000.00",
-                "product_buying_price_name" : "즉시 구매가순",
-                'product_selling_price'     : "1164000.00",
-                "product_selling_price_name": "즉시 판매가순",
-                "product_original_price"    : "19000.00",
+                "product_price"             : "1164000.00",
+                "sort_name"                 : "즉시 판매가순",
                 "author_name"               : "Amour Grenville",
                 "image"                     : ["https://images.unsplash.com/photo-1580981454083-eca7032db2c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMjA3fDB8MXxzZWFyY2h8NHx8cG9zdGVyfHwwfDJ8fHwxNjI2Njg4OTQ0&ixlib=rb-1.2.1&q=80&w=1080"]
             }
@@ -273,4 +267,3 @@ class ProductTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {"results":productlist})
-        
