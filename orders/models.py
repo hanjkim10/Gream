@@ -26,6 +26,10 @@ class Contract(TimeStampModel):
         db_table = 'contracts'
 
 class Status(models.Model):
+    ON_BIDDING = 1
+    EXPIRED    = 2
+    CONTRACTED = 3
+
     name = models.CharField(max_length=45)
 
     class Meta:
