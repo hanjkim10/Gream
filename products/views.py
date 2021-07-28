@@ -1,10 +1,25 @@
 import json
+from django.db.models.aggregates import Max
 
 from django.http        import JsonResponse
 from django.views       import View
-from django.db.models   import Q
+from django.db.models   import Q, Count
 
 from products.models    import Author, Theme, Color, Size, Product
+
+class BestAuthorView(View):
+    def get (self, request):
+        biddings = Count('product__bidding', filter=Q(product__bidding__is_seller=0))
+        popular_biddings = Author.objects.annotate(product_count = biddings).order_by('-product_count')[:4]
+
+        results = [
+            {
+                "top_author" : topauthor.name,
+                "author_id"  : topauthor.id
+            } for topauthor in popular_biddings
+        ]
+
+        return JsonResponse ({"results":results}, status = 200)
 
 class CategoryView(View):
     def get(self, request):
@@ -15,50 +30,53 @@ class CategoryView(View):
 
         results = [
             {
-                "category_name": "작가",
-                "option"       : [
+                "category_name"   : "author",
+                "category_name_kr": "작가",
+                "option"          : [
                     {
                         "name": author.name,
                         "id"  : author.id
                     } for author in authors
                 ]},
             {
-                "category_name": "테마",
-                "option"       : [
+                "category_name"   : "theme",
+                "category_name_kr": "테마",
+                "option"          : [
                     {
                         "name": theme.name,
                         "id"  : theme.id
                     } for theme in themes
                 ]},
             {
-                "category_name": "색상",
-                "option"       : [
+                "category_name"   : "color",
+                "category_name_kr": "색상",
+                "option"          : [
                     {
                         "name": color.name,
                         "id"  : color.id
                     } for color in colors
                 ]},
             {
-                "category_name": "크기",
-                "option"       : [
+                "category_name"   : "size",
+                "category_name_kr": "크기",
+                "option"          : [
                     {
                         "name": size.name,
                         "id"  : size.id
                     } for size in sizes
                 ]}
-            ]
+        ]
         return JsonResponse ({"results":results}, status = 200)
 
 class ProductView(View):
     def get(self, request):
-        author_id = request.GET.get("author", None)
-        theme_id  = request.GET.get("theme", None)
-        color_id  = request.GET.get("color", None)
-        size_id   = request.GET.get("size", None)
-        sort      = request.GET.get("sort", "selling-price-descending")
+        author_id = request.GET.getlist("author", None)
+        theme_id  = request.GET.getlist("theme", None)
+        color_id  = request.GET.getlist("color", None)
+        size_id   = request.GET.getlist("size", None)
+        sort      = request.GET.get("sort", "buying-price-ascending")
         offset    = int(request.GET.get("offset",0))
         limit     = int(request.GET.get("limit",100))
-        offset    = offset * limit
         limit     = offset + limit
         options   = {
             "selling-price-descending" : "-current_selling_price",
@@ -70,15 +88,19 @@ class ProductView(View):
         q = Q()
 
         if author_id:
-            q.add(Q(author_id=author_id), q.AND)
-        if theme_id:
-            q.add(Q(theme=theme_id), q.AND)
-        if color_id:
-            q.add(Q(color=color_id), q.AND)
-        if size_id:
-            q.add(Q(size_id=size_id), q.AND)
+            q &= Q(author_id__in = author_id)
 
-        products = Product.objects.filter(q).order_by(options[sort])[offset:limit]
+        if theme_id:
+            q &= Q(theme__in = theme_id)
+
+        if color_id:
+            q &= Q(color__in = color_id)
+
+        if size_id:
+            q &= Q(size__in = size_id)
+            
+        products = Product.objects.filter(q).order_by(options.get(sort, None))[offset:limit]
+        count    = products.count()
 
         productslist = [
             {
@@ -93,5 +115,4 @@ class ProductView(View):
             "image"         : [image.image_url for image in product.productimage_set.all()],
             } for product in products
         ]
-
-        return JsonResponse({"results":productslist}, status = 200)
+        return JsonResponse({"product_count":count, "results":productslist}, status = 200)
