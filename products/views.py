@@ -99,7 +99,7 @@ class ProductView(View):
         if size_id:
             q &= Q(size__in = size_id)
             
-        products = Product.objects.filter(q).order_by(options.get(sort, None))[offset:limit]
+        products = Product.objects.filter(q).order_by(options.get(sort, None))
         count    = products.count()
 
         productslist = [
@@ -113,6 +113,6 @@ class ProductView(View):
                                 ("즉시 판매가순" if sort == "selling-price-descending" else "발매가순"),
             "author_name"   : product.author.name,
             "image"         : [image.image_url for image in product.productimage_set.all()],
-            } for product in products
+            } for product in products[offset:limit]
         ]
         return JsonResponse({"product_count":count, "results":productslist}, status = 200)
