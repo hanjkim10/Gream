@@ -50,7 +50,7 @@ class SignupTest(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), 
             {
-                'error':'INVALID_ERROR'
+                'message':'INVALID_ERROR'
             }
         )
 
@@ -67,7 +67,7 @@ class SignupTest(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), 
             {
-                'error':'INVALID_ERROR'
+                'message':'INVALID_ERROR'
             }
         )
 
