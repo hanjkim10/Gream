@@ -110,7 +110,6 @@ class ContractView(View):
         except KeyError:
             return JsonResponse({'message': "KEY_ERROR"}, status=400)
 
-
 class BiddinghistoryView(View):
     def get(self, request):
         status_id = request.GET.get("status_id", None)
