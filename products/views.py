@@ -76,7 +76,7 @@ class ProductView(View):
         theme_id  = request.GET.getlist("theme", None)
         color_id  = request.GET.getlist("color", None)
         size_id   = request.GET.getlist("size", None)
-        sort      = request.GET.get("sort", "buying-price-ascending")
+        sort      = request.GET.get("sort", "original-price-ascending")
         offset    = int(request.GET.get("offset",0))
         limit     = int(request.GET.get("limit",100))
         limit     = offset + limit
