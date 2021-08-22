@@ -3,11 +3,10 @@
 - Account, Product category & detail, Order, Bidding 구현
 - 초기 세팅부터 모델링과 프론트로 보내주는 모든 제품 data를 실제 사용할 수 있는 서비스 수준으로 개발
 
+<br>
 
-
-- 제품 엔드포인트
->
->- 베스트 작가 필터링
+>- 제품 엔드포인트
+>   - 베스트 작가 필터링
 >```python
 >class BestAuthorView(View):
 >   def get (self, request):
