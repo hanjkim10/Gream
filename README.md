@@ -5,7 +5,7 @@
 
 
 
->- 제품 엔드포인트
+- 제품 엔드포인트
 >
 >- 베스트 작가 필터링
 >```python
@@ -118,7 +118,7 @@
 >       return JsonResponse({"product_count":count, "results":productslist}, status = 200)
 >```
 
->- 주문 엔드포인트
+- 주문 엔드포인트
 >```python
 >class BiddinghistoryView(View):
 >    def get(self, request):
