@@ -6,7 +6,9 @@
 
 
 >- 제품 엔드포인트
+>
 >- 베스트 작가 필터링
+>```python
 >class BestAuthorView(View):
 >   def get (self, request):
 >       biddings = Count('product__bidding', filter=Q(product__bidding__is_seller=0))
@@ -19,8 +21,10 @@
 >       ]
 >
 >       return JsonResponse ({"results":results}, status = 200)
->       
+>```
+> 
 >- 카테고리 필터링
+>```python
 >class CategoryView(View):
 >   def get(self, request):
 >       authors  = Author.objects.all()
@@ -66,8 +70,10 @@
 >               ]}
 >       ]
 >       return JsonResponse ({"results":results}, status = 200)
->       
+>```
+> 
 >- 제품 필터링
+>```python
 >class ProductView(View):
 >   def get(self, request):
 >       author_id = request.GET.getlist("author", None)
@@ -110,8 +116,10 @@
 >           } for product in products[offset:limit]
 >       ]
 >       return JsonResponse({"product_count":count, "results":productslist}, status = 200)
+>```
 
 >- 주문 엔드포인트
+>```python
 >class BiddinghistoryView(View):
 >    def get(self, request):
 >        status_id = request.GET.get("status_id", None)
@@ -141,6 +149,7 @@
 >            } for bidding in biddings
 >        ]
 >        return JsonResponse({"results":biddinglist}, status = 200)
+>```
 
 
 ### 개발 인원 및 기간
