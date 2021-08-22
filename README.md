@@ -1,7 +1,7 @@
-프로젝트명: GREAM 🖼
-# Kream 클론 프로젝트
-# Account, Product category & detail, Order, Bidding 구현
-# 초기 세팅부터 모델링과 프론트로 보내주는 모든 제품 data를 실제 사용할 수 있는 서비스 수준으로 개발
+## 프로젝트명: GREAM 🖼
+- Kream 클론 프로젝트
+- Account, Product category & detail, Order, Bidding 구현
+- 초기 세팅부터 모델링과 프론트로 보내주는 모든 제품 data를 실제 사용할 수 있는 서비스 수준으로 개발
 
 
 
@@ -19,7 +19,8 @@
 >       ]
 >
 >       return JsonResponse ({"results":results}, status = 200)
->* 카테고리 필터링
+>       
+>- 카테고리 필터링
 >class CategoryView(View):
 >   def get(self, request):
 >       authors  = Author.objects.all()
@@ -65,6 +66,7 @@
 >               ]}
 >       ]
 >       return JsonResponse ({"results":results}, status = 200)
+>       
 >- 제품 필터링
 >class ProductView(View):
 >   def get(self, request):
@@ -141,30 +143,32 @@
 >        return JsonResponse({"results":biddinglist}, status = 200)
 
 
+### 개발 인원 및 기간
 
-
-개발 인원 및 기간
 개발기간 : 2021/7/19 ~ 2021/7/30
+
 개발 인원 : 프론트엔드 3명, 백엔드 3명
+
 https://github.com/wecode-bootcamp-korea/22-2nd-GREAM-frontend
+
 https://github.com/wecode-bootcamp-korea/22-2nd-GREAM-backend
 
-프론트
+### 프론트
 박정훈, 오지수, 이경민
 
-백엔드
+### 백엔드
 김한준, 서정민, 안재경
 
-기술스텍
-# python
-# django
-# MySQL
-# RESTful API
-# AWS
-# PyJWT
-# bcrypt
+### 기술스텍
+- python
+- django
+- MySQL
+- RESTful API
+- AWS
+- PyJWT
+- bcrypt
 
-구현기능
+### 구현기능
 
 공통
 - 프로젝트 초기 세팅
@@ -193,6 +197,6 @@ https://github.com/wecode-bootcamp-korea/22-2nd-GREAM-backend
 - 제품 상세 엔드포인드(상품 정보, 최근 체결거래 가격 기간별 filtering, 해당 상품 체결거래 내역 조회)
 
 Reference
-* 이 프로젝트는 Kream 사이트를 참조하여 학습목적으로 만들었습니다.
-* 실무수준의 프로젝트이지만 학습용으로 만들었기 때문에 이 코드를 활용하여 이득을 취하거나 무단 배포할 경우 법적으로 문제될 수 있습니다.
-* 이 프로젝트에서 사용하고 있는 사진 대부분은 위코드에서 구매한 것이므로 해당 프로젝트 외부인이 사용할 수 없습니다.
+- 이 프로젝트는 Kream 사이트를 참조하여 학습목적으로 만들었습니다.
+- 실무수준의 프로젝트이지만 학습용으로 만들었기 때문에 이 코드를 활용하여 이득을 취하거나 무단 배포할 경우 법적으로 문제될 수 있습니다.
+- 이 프로젝트에서 사용하고 있는 사진 대부분은 위코드에서 구매한 것이므로 해당 프로젝트 외부인이 사용할 수 없습니다.
