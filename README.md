@@ -20,8 +20,7 @@
 >          ]
 >   
 >          return JsonResponse ({"results":results}, status = 200)
->```
-> 
+>   ```
 >   - 카테고리 필터링
 >   ```python
 >   class CategoryView(View):
