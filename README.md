@@ -1,5 +1,5 @@
 ## 프로젝트명: GREAM 🖼
-- Kream 클론 프로젝트
+- Kream 클론 프로젝트 (KREAM(한정판 거래 플랫폼)을 모티브로 한 그림 판매 사이트 구현)
 - Account, Product category & detail, Order, Bidding 구현
 - 초기 세팅부터 모델링과 프론트로 보내주는 모든 제품 data를 실제 사용할 수 있는 서비스 수준으로 개발
 
