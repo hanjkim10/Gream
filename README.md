@@ -7,19 +7,19 @@
 
 >- 제품 엔드포인트
 >   - 베스트 작가 필터링
->```python
->class BestAuthorView(View):
->   def get (self, request):
->       biddings = Count('product__bidding', filter=Q(product__bidding__is_seller=0))
->       popular_biddings = Author.objects.annotate(product_count = biddings).order_by('-product_count')[:4]
->       results = [
->           {
->               "top_author" : topauthor.name,
->               "author_id"  : topauthor.id
->           } for topauthor in popular_biddings
->       ]
->
->       return JsonResponse ({"results":results}, status = 200)
+>   ```python
+>   class BestAuthorView(View):
+>      def get (self, request):
+>          biddings = Count('product__bidding', filter=Q(product__bidding__is_seller=0))
+>          popular_biddings = Author.objects.annotate(product_count = biddings).order_by('-product_count')[:4]
+>          results = [
+>              {
+>                  "top_author" : topauthor.name,
+>                  "author_id"  : topauthor.id
+>              } for topauthor in popular_biddings
+>          ]
+>   
+>          return JsonResponse ({"results":results}, status = 200)
 >```
 > 
 >- 카테고리 필터링
