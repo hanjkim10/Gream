@@ -8,10 +8,13 @@ from django.db.models            import Q, Prefetch, Count
 from django.db.models.aggregates import Max
 from django.utils                import timezone
 
+from decorators   import query_debugger
+
 from products.models             import Author, Theme, Color, Size, Product, ProductColor, ProductImage
 from orders.models               import Bidding, Contract
 
 class BestAuthorView(View):
+    @query_debugger
     def get (self, request):
         biddings = Count('product__bidding', filter=Q(product__bidding__is_seller=0))
         popular_biddings = Author.objects.annotate(product_count = biddings).order_by('-product_count')[:4]
@@ -25,6 +28,7 @@ class BestAuthorView(View):
         return JsonResponse ({"results":results}, status = 200)
 
 class CategoryView(View):
+    @query_debugger
     def get(self, request):
         authors  = Author.objects.all()
         themes   = Theme.objects.all()
@@ -71,6 +75,7 @@ class CategoryView(View):
         return JsonResponse ({"results":results}, status = 200)
 
 class ProductView(View):
+    @query_debugger
     def get(self, request):
         author_id = request.GET.getlist("author", None)
         theme_id  = request.GET.getlist("theme", None)
@@ -95,9 +100,10 @@ class ProductView(View):
             q &= Q(color__in = color_id)
         if size_id:
             q &= Q(size__in = size_id)
-
+            
         products = Product.objects.filter(q).order_by(options.get(sort, None))
         count    = products.count()
+    
         productslist = [
             {
             "author_id"     : product.author.id,
@@ -114,6 +120,7 @@ class ProductView(View):
         return JsonResponse({"product_count":count, "results":productslist}, status = 200)
 
 class ProductDetailView(View):
+    @query_debugger
     def get(self, request, product_id):
         if not Product.objects.filter(id=product_id).exists():
             return JsonResponse({'message':'INVALID_ERROR'}, status=404)     
