@@ -160,4 +160,20 @@ CRONJOBS = [
     ('10 00 * * *', 'orders.cron.update_bidding_status', '>> /tmp/update.log')
 ]
 
-LOGGING = LOGGING
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}
