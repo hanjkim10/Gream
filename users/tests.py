@@ -323,7 +323,7 @@ class KakaoSignupTest(TestCase):
         response            = client.get("/users/signin/kakao", **headers)
         access_token        = response.json()['TOKEN']
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json(), 
             {
                 'message':'SUCCESS',

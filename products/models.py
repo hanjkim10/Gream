@@ -1,4 +1,5 @@
-from django.db import models
+from django.db     import models
+from orders.models import Contract
 
 class Product(models.Model):
     name                  = models.CharField(max_length=100)
@@ -10,7 +11,6 @@ class Product(models.Model):
 
     class Meta:
         db_table = 'products'
-
 class ProductTheme(models.Model):
     theme   = models.ForeignKey('Theme', on_delete=models.SET_NULL, null=True)
     product = models.ForeignKey('Product', on_delete=models.CASCADE)

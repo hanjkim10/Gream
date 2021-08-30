@@ -746,3 +746,5 @@ gream_settings.py
 
 *.csv
 csv_to_mysql.py
+gream.sql
+.sql
