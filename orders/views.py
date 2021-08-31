@@ -9,6 +9,7 @@ from django.db.models   import Q
 from products.models    import Product
 from orders.models      import Bidding, Contract, Status
 from utils              import authorization
+from decorators         import query_debugger
 
 class BiddingView(View):
     @authorization
@@ -111,6 +112,8 @@ class ContractView(View):
             return JsonResponse({'message': "KEY_ERROR"}, status=400)
 
 class BiddinghistoryView(View):
+    @authorization
+    @query_debugger
     def get(self, request):
         status_id = request.GET.get("status_id", None)
         offset    = int(request.GET.get("offset",0))
