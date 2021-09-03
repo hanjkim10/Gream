@@ -9,6 +9,7 @@
 >   - 베스트 작가 필터링
 >   ```python
 >   class BestAuthorView(View):
+>      @query_debugger
 >      def get (self, request):
 >          biddings = Count('product__bidding', filter=Q(product__bidding__is_seller=0))
 >          popular_biddings = Author.objects.annotate(product_count = biddings).order_by('-product_count')[:4]
@@ -24,6 +25,7 @@
 >   - 카테고리 필터링
 >   ```python
 >   class CategoryView(View):
+>      @query_debugger
 >      def get(self, request):
 >          authors  = Author.objects.all()
 >          themes   = Theme.objects.all()
@@ -73,6 +75,7 @@
 >   - 제품 필터링
 >   ```python
 >   class ProductView(View):
+>      @query_debugger
 >      def get(self, request):
 >          author_id = request.GET.getlist("author", None)
 >          theme_id  = request.GET.getlist("theme", None)
@@ -119,6 +122,7 @@
 - 주문 엔드포인트
 >```python
 >class BiddinghistoryView(View):
+>    @query_debugger
 >    def get(self, request):
 >        status_id = request.GET.get("status_id", None)
 >        offset    = int(request.GET.get("offset",0))
