@@ -50,7 +50,8 @@ class SignupView(APIView):
         except KeyError:
             return JsonResponse({'message':'KEY_ERROR'},status=400)
 
-class SigninView(View):
+class SigninView(APIView):
+    @swagger_auto_schema(manual_parameters = [], responses = users_schema_dict)
     def post(self, request):
         try:
             data = json.loads(request.body)
@@ -70,7 +71,8 @@ class SigninView(View):
         except KeyError:
             return JsonResponse({'message':'KEY_ERROR'}, status=400)
 
-class UserView(View):
+class UserView(APIView):
+    @swagger_auto_schema(manual_parameters = [], responses = users_schema_dict)
     @authorization
     def get(self, request):
         user = request.user
