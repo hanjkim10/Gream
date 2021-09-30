@@ -8,10 +8,19 @@ from django.http.response import JsonResponse
 from django.db.models   import Q
 from products.models    import Product
 from orders.models      import Bidding, Contract, Status
+from orders.response    import orders_schema_dict
+
+from rest_framework.views import APIView
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 from utils              import authorization
 from decorators         import query_debugger
 
-class BiddingView(View):
+
+
+class BiddingView(APIView):
+    @swagger_auto_schema(manual_parameters = [], responses = orders_schema_dict)
     @authorization
     def post(self, request):
         try:
@@ -52,7 +61,8 @@ class BiddingView(View):
         except KeyError:
             return JsonResponse({'message': 'KEY_ERROR'}, status=400)
 
-class ContractView(View):
+class ContractView(APIView):
+    @swagger_auto_schema(manual_parameters = [], responses = orders_schema_dict)
     @authorization
     def post(self, request):
         try:
@@ -111,7 +121,8 @@ class ContractView(View):
         except KeyError:
             return JsonResponse({'message': "KEY_ERROR"}, status=400)
 
-class BiddinghistoryView(View):
+class BiddinghistoryView(APIView):
+    @swagger_auto_schema(manual_parameters = [], responses = orders_schema_dict)
     @authorization
     @query_debugger
     def get(self, request):
