@@ -10,12 +10,19 @@ from users.models    import User
 from gream.settings  import SECRET_KEY, ALGORITHMS
 from utils           import authorization
 
+from users.response  import users_schema_dict
+
+from rest_framework.views import APIView
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 REGEX = {
     'email'    : '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$',
     'password' : '^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%#?&])[A-Za-z\d@$!%*#?&]{8,16}$'
 }
 
-class SignupView(View):
+class SignupView(APIView):
+    @swagger_auto_schema(manual_parameters = [], responses = users_schema_dict)
     def post(self, request):
         try:
             data         = json.loads(request.body)

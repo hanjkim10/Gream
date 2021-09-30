@@ -8,12 +8,18 @@ from django.db.models            import Q, Prefetch, Count
 from django.db.models.aggregates import Max
 from django.utils                import timezone
 
+from rest_framework.views import APIView
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 from decorators   import query_debugger
 
 from products.models             import Author, Theme, Color, Size, Product, ProductColor, ProductImage
+from products.response           import products_schema_dict
 from orders.models               import Bidding, Contract
 
-class BestAuthorView(View):
+class BestAuthorView(APIView):
+    @swagger_auto_schema(manual_parameters = [], responses = products_schema_dict)
     @query_debugger
     def get (self, request):
         biddings = Count('product__bidding', filter=Q(product__bidding__is_seller=0))
@@ -27,7 +33,8 @@ class BestAuthorView(View):
 
         return JsonResponse ({"results":results}, status = 200)
 
-class CategoryView(View):
+class CategoryView(APIView):
+    @swagger_auto_schema(manual_parameters = [], responses = products_schema_dict)
     @query_debugger
     def get(self, request):
         authors  = Author.objects.all()
@@ -74,7 +81,8 @@ class CategoryView(View):
         ]
         return JsonResponse ({"results":results}, status = 200)
 
-class ProductView(View):
+class ProductView(APIView):
+    @swagger_auto_schema(manual_parameters = [], responses = products_schema_dict)
     @query_debugger
     def get(self, request):
         author_id = request.GET.getlist("author", None)
@@ -119,7 +127,8 @@ class ProductView(View):
         ]
         return JsonResponse({"product_count":count, "results":productslist}, status = 200)
 
-class ProductDetailView(View):
+class ProductDetailView(APIView):
+    @swagger_auto_schema(manual_parameters = [], responses = products_schema_dict)
     @query_debugger
     def get(self, request, product_id):
         if not Product.objects.filter(id=product_id).exists():
