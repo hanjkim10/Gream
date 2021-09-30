@@ -1,22 +1,24 @@
-import json
-from datetime                    import datetime, timedelta
-from dateutil.relativedelta      import relativedelta
 
-from django.http                 import JsonResponse
-from django.views                import View
-from django.db.models            import Q, Prefetch, Count
-from django.db.models.aggregates import Max
-from django.utils                import timezone
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
-from decorators   import query_debugger
+from django.http import JsonResponse
+from django.db.models import Q, Prefetch, Count
 
-from products.models             import Author, Theme, Color, Size, Product, ProductColor, ProductImage
-from orders.models               import Bidding, Contract
+from rest_framework.views import APIView
+from drf_yasg.utils import swagger_auto_schema
 
-class BestAuthorView(View):
+from decorators import query_debugger
+
+from products.models import Author, Theme, Color, Size, Product
+from products.response import products_schema_dict
+from orders.models import Bidding, Contract
+
+class BestAuthorView(APIView):
+    @swagger_auto_schema(manual_parameters = [], responses = products_schema_dict)
     @query_debugger
-    def get (self, request):
-        biddings = Count('product__bidding', filter=Q(product__bidding__is_seller=0))
+    def get(self, request):
+        biddings = Count('product__bidding', filter = Q(product__bidding__is_seller=0))
         popular_biddings = Author.objects.annotate(product_count = biddings).order_by('-product_count')[:4]
         results = [
             {
@@ -25,9 +27,10 @@ class BestAuthorView(View):
             } for topauthor in popular_biddings
         ]
 
-        return JsonResponse ({"results":results}, status = 200)
+        return JsonResponse({"results": results}, status = 200)
 
-class CategoryView(View):
+class CategoryView(APIView):
+    @swagger_auto_schema(manual_parameters = [], responses = products_schema_dict)
     @query_debugger
     def get(self, request):
         authors  = Author.objects.all()
@@ -72,9 +75,10 @@ class CategoryView(View):
                     } for size in sizes
                 ]}
         ]
-        return JsonResponse ({"results":results}, status = 200)
+        return JsonResponse({"results": results}, status = 200)
 
-class ProductView(View):
+class ProductView(APIView):
+    @swagger_auto_schema(manual_parameters = [], responses = products_schema_dict)
     @query_debugger
     def get(self, request):
         author_id = request.GET.getlist("author", None)
@@ -82,8 +86,8 @@ class ProductView(View):
         color_id  = request.GET.getlist("color", None)
         size_id   = request.GET.getlist("size", None)
         sort      = request.GET.get("sort", "original-price-ascending")
-        offset    = int(request.GET.get("offset",0))
-        limit     = int(request.GET.get("limit",100))
+        offset    = int(request.GET.get("offset", 0))
+        limit     = int(request.GET.get("limit", 100))
         limit     = offset + limit
         options   = {
             "selling-price-descending" : "-current_selling_price",
@@ -117,13 +121,14 @@ class ProductView(View):
             "image"         : [image.image_url for image in product.productimage_set.all()],
             } for product in products[offset:limit]
         ]
-        return JsonResponse({"product_count":count, "results":productslist}, status = 200)
+        return JsonResponse({"product_count": count, "results": productslist}, status = 200)
 
-class ProductDetailView(View):
+class ProductDetailView(APIView):
+    @swagger_auto_schema(manual_parameters = [], responses = products_schema_dict)
     @query_debugger
     def get(self, request, product_id):
         if not Product.objects.filter(id=product_id).exists():
-            return JsonResponse({'message':'INVALID_ERROR'}, status=404)     
+            return JsonResponse({'message': 'INVALID_ERROR'}, status=404)     
 
         product = Product.objects.prefetch_related(
             'productcolor_set__color',
@@ -135,9 +140,9 @@ class ProductDetailView(View):
         
         contract_choice = request.GET.get('contract_choice', '1w')
         contract_period = {
-            '3m':datetime.now()-relativedelta(months=3),
-            '1m':datetime.now()-relativedelta(months=1),
-            '1w':datetime.now()-timedelta(weeks=1)
+            '3m': datetime.now() - relativedelta(months=3),
+            '1m': datetime.now() - relativedelta(months=1),
+            '1w': datetime.now() - timedelta(weeks=1)
         }
         contract_all = Contract.objects.select_related('selling_bid__product').filter(selling_bid__product=product_id)
         contracts    = contract_all.filter(created_at__range=(contract_period[contract_choice], datetime.now())).order_by('-created_at')
@@ -163,38 +168,38 @@ class ProductDetailView(View):
         }
 
         contract_all = [{
-            'contract_date' :contract.created_at.strftime('%Y-%m-%d'), 
-            'contract_price':contract.selling_bid.price
+            'contract_date' : contract.created_at.strftime('%Y-%m-%d'), 
+            'contract_price': contract.selling_bid.price
         } for contract in contract_all]
 
         contract_detail = [{
-            'contract_date' :contract.created_at.strftime('%Y-%m-%d'),
-            'contract_price':contract.selling_bid.price
+            'contract_date' : contract.created_at.strftime('%Y-%m-%d'),
+            'contract_price': contract.selling_bid.price
         } for contract in contracts]
 
         bidding_detail  = {
-            'selling_bidding':[{
+            'selling_bidding': [{
                 'selling_bidding_date' : selling_bidding.created_at.strftime('%Y-%m-%d'),
-                'selling_bidding_price' :selling_bidding.price
+                'selling_bidding_price' : selling_bidding.price
             } for selling_bidding in product.selling_bidding],
-            'buying_bidding':[{
-                'buying_bidding_date':buying_bidding.created_at.strftime('%Y-%m-%d'),
-                'buying_bidding_price':buying_bidding.price
+            'buying_bidding': [{
+                'buying_bidding_date': buying_bidding.created_at.strftime('%Y-%m-%d'),
+                'buying_bidding_price': buying_bidding.price
             } for buying_bidding in product.buying_bidding],
         }
 
         product_info = {
-            'model_number'  :product_id,
-            'author'        :product.author.name,
-            'color'         :[product_color.color.name for product_color in product.productcolor_set.all()],
-            'original_price':product.original_price
+            'model_number'  : product_id,
+            'author'        : product.author.name,
+            'color'         : [product_color.color.name for product_color in product.productcolor_set.all()],
+            'original_price': product.original_price
         }
 
         return JsonResponse({
-            'message'        :'SUCCESS',
-            'main_info'      :main_info,
-            'contract_detail':contract_detail,
-            'contract_all'   :contract_all,
-            'bidding_detail' :bidding_detail,
-            'product_info'   :product_info},
+            'message'        : 'SUCCESS',
+            'main_info'      : main_info,
+            'contract_detail': contract_detail,
+            'contract_all'   : contract_all,
+            'bidding_detail' : bidding_detail,
+            'product_info'   : product_info},
         status=200)
