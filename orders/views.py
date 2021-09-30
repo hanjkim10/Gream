@@ -1,23 +1,19 @@
 import json
 
-from django.views       import View
-from django.utils       import timezone
+from django.utils import timezone
 
 from django.http.response import JsonResponse
 
-from django.db.models   import Q
-from products.models    import Product
-from orders.models      import Bidding, Contract, Status
-from orders.response    import orders_schema_dict
+from django.db.models import Q
+from products.models import Product
+from orders.models import Bidding, Contract, Status
+from orders.response import orders_schema_dict
 
 from rest_framework.views import APIView
 from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
 
-from utils              import authorization
-from decorators         import query_debugger
-
-
+from utils import authorization
+from decorators import query_debugger
 
 class BiddingView(APIView):
     @swagger_auto_schema(manual_parameters = [], responses = orders_schema_dict)
@@ -35,11 +31,11 @@ class BiddingView(APIView):
             contract_type = request.GET.get('type', None)
 
             if contract_type not in ['buy', 'sell']:
-                    return JsonResponse({'message': 'INVALID_TYPE'}, status=400)
+                return JsonResponse({'message': 'INVALID_TYPE'}, status=400)
 
             bidding = Bidding.objects.create(
                 expired_within_id = data['expired_within_id'],
-                is_seller         = False if contract_type=='buy' else True,
+                is_seller         = False if contract_type =='buy' else True,
                 user              = user,
                 product_id        = product_id,
                 price             = data['price'],
@@ -127,8 +123,8 @@ class BiddinghistoryView(APIView):
     @query_debugger
     def get(self, request):
         status_id = request.GET.get("status_id", None)
-        offset    = int(request.GET.get("offset",0))
-        limit     = int(request.GET.get("limit",100))
+        offset    = int(request.GET.get("offset", 0))
+        limit     = int(request.GET.get("limit", 100))
         offset    = offset * limit
         limit     = offset + limit
         
@@ -152,4 +148,4 @@ class BiddinghistoryView(APIView):
                 "expired_date"  : (bidding.updated_at + timezone.timedelta(days=bidding.expired_within.period)).strftime("%Y.%m.%d"),
             } for bidding in biddings
         ]
-        return JsonResponse({"results":biddinglist}, status = 200)
+        return JsonResponse({"results": biddinglist}, status = 200)
